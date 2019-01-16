@@ -1,0 +1,61 @@
+# For full text searches
+# 各種全文検索用
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC100
+column_create Terms authors_key \
+  COLUMN_INDEX|WITH_POSITION Authors _key
+column_create Terms paper_publishers_key \
+  COLUMN_INDEX|WITH_POSITION PaperPublishers _key
+column_create Terms magazines_key \
+  COLUMN_INDEX|WITH_POSITION Magazines _key
+column_create Terms book_publishers_key \
+  COLUMN_INDEX|WITH_POSITION BookPublishers _key
+column_create Terms parent_categories_key \
+  COLUMN_INDEX|WITH_POSITION ParentCategories _key
+column_create Terms child_categories_key \
+  COLUMN_INDEX|WITH_POSITION ChildCategories _key
+column_create Terms series_key \
+  COLUMN_INDEX|WITH_POSITION Series _key
+column_create Terms literature_title \
+  COLUMN_INDEX|WITH_POSITION Literature title
+
+# For finding papers found by full text search against authors
+# 著者名で全文検索して論文を絞り込むときに必要
+column_create Authors literature_authors \
+  COLUMN_INDEX Literature authors
+
+# For finding magazines found by full text search against publisher name
+# 出版元名で全文検索して雑誌を絞り込むときに必要
+column_create PaperPublishers magazines_publisher \
+  COLUMN_INDEX Magazines publisher
+
+# For finding volumes found by full text search against magazine name
+# 雑誌名で全文検索して号を絞り込むときに必要
+column_create Magazines volumes_magazine \
+  COLUMN_INDEX Volumes magazine
+
+# For finding papers found by full text search against volume
+# 号の情報で検索して論文を絞り込むときに必要
+column_create Volumes literature_volume \
+  COLUMN_INDEX Literature volume
+
+# For finding books found by full text search against publisher name
+# 出版社名で全文検索して書籍を絞り込むときに必要
+column_create BookPublishers literature_book_publisher \
+  COLUMN_INDEX Literature book_publisher
+
+# For finding books found by search against chidl category
+# 子カテゴリの情報で検索して書籍を絞り込むときに必要
+column_create ChildCategories literature_child_category \
+  COLUMN_INDEX Literature child_category
+
+# For finding child categories found by search against parent category
+# 親カテゴリの情報で検索して子カテゴリーを絞り込むときに必要
+column_create ParentCategories child_categories_parent \
+  COLUMN_INDEX ChildCategories parent
+
+# For finding books found by full text search against series name
+# シリーズ名で全文検索して書籍を絞り込むときに必要
+column_create Series literature_series \
+  COLUMN_INDEX Literature series

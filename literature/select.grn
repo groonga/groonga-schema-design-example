@@ -1,0 +1,157 @@
+# Full text search against paper and book
+# 横断全文検索
+select \
+  --table Literature \
+  --match_columns 'title || authors._key' \
+  --query '簡単 OR 山田' \
+  --output_columns 'title, type, authors' \
+  --output_pretty yes
+
+# Full text search against only paper
+# 論文だけ全文検索
+select \
+  --table Literature \
+  --match_columns 'title || authors._key' \
+  --query '簡単 OR 山田' \
+  --filter 'type == "paper"' \
+  --output_columns 'title, type, authors' \
+  --output_pretty yes
+
+# Full text search against only book
+# 書籍だけ全文検索
+select \
+  --table Literature \
+  --match_columns 'title || authors._key' \
+  --query '簡単 OR 山田' \
+  --filter 'type == "book"' \
+  --output_columns 'title, type, authors' \
+  --output_pretty yes
+
+# Full text search + drilldown
+# Drilldown:
+#   * types: paper or book
+#   * volumes: Volume
+#   * magazines: Magazine
+#   * paper_publishers: Publisher for paper
+#   * book_publishers: Publisher for book
+#   * child_categories: Child category
+#   * parent_categories: Parent category
+#   * series: Series
+#
+# 横断全文検索 + ドリルダウン
+# ドリルダウン：
+#   * types: 論文（paper）か書籍（book）か
+#   * volumes: 号
+#   * magazines: 雑誌
+#   * paper_publishers: 論文の出版社
+#   * book_publishers: 書籍の出版社
+#   * child_categories: 子カテゴリ
+#   * parent_categories: 親カテゴリ
+#   * series: シリーズ
+select \
+  --table Literature \
+  --match_columns 'title || authors._key' \
+  --query '簡単 OR 山田' \
+  --output_columns 'title, authors' \
+  --drilldowns[types].keys 'type' \
+  --drilldowns[types].output_columns '_key,_nsubrecs' \
+  --drilldowns[volumes].keys 'volume' \
+  --drilldowns[volumes].output_columns '_key,_nsubrecs' \
+  --drilldowns[magazines].table 'volumes' \
+  --drilldowns[magazines].keys 'magazine' \
+  --drilldowns[magazines].calc_target '_nsubrecs' \
+  --drilldowns[magazines].calc_types 'SUM' \
+  --drilldowns[magazines].output_columns '_key,_sum' \
+  --drilldowns[paper_publishers].table 'magazines' \
+  --drilldowns[paper_publishers].keys 'publisher' \
+  --drilldowns[paper_publishers].calc_target '_sum' \
+  --drilldowns[paper_publishers].calc_types 'SUM' \
+  --drilldowns[paper_publishers].output_columns '_key,_sum' \
+  --drilldowns[book_publishers].keys 'book_publisher' \
+  --drilldowns[book_publishers].output_columns '_key,_nsubrecs' \
+  --drilldowns[child_categories].keys 'child_category' \
+  --drilldowns[child_categories].output_columns '_key,_nsubrecs' \
+  --drilldowns[parent_categories].table 'child_categories' \
+  --drilldowns[parent_categories].keys 'parent' \
+  --drilldowns[parent_categories].calc_target '_nsubrecs' \
+  --drilldowns[parent_categories].calc_types 'SUM' \
+  --drilldowns[parent_categories].output_columns '_key,_sum' \
+  --drilldowns[series].keys 'series' \
+  --drilldowns[series].output_columns '_key,_nsubrecs' \
+  --output_pretty yes
+
+# List magazines of found publisheres
+# Full text search against publisher name
+# 出版元が発行している雑誌の一覧
+# 出版元名で全文検索
+select \
+  --table Magazines \
+  --match_columns 'publisher._key' \
+  --query 'イケてる論文出版' \
+  --output_columns '_key, publisher' \
+  --output_pretty yes
+
+# List volumns of found magazines
+# Full text search against magazine name
+# 雑誌の号の一覧
+# 雑誌名で全文検索
+select \
+  --table Volumes \
+  --match_columns 'magazine._key' \
+  --query 'イケてる雑誌' \
+  --output_columns '_key, magazine' \
+  --output_pretty yes
+
+# List papers of found volumes
+# Full text search against volume name
+# 号内の論文の一覧
+# 号名で検索
+select \
+  --table Literature \
+  --filter 'volume == "イケてる1号"' \
+  --output_columns '_key, title, volume, volume.magazine' \
+  --output_pretty yes
+
+# List books of found publisheres
+# Full text search against publisher name
+# 出版社が発行している書籍の一覧
+# 出版社名で全文検索
+select \
+  --table Literature \
+  --match_columns 'book_publisher._key' \
+  --query 'イケてる書籍出版' \
+  --output_columns '_key, title, book_publisher' \
+  --output_pretty yes
+
+# List books of found child categories
+# Full text search against child category name
+# 子カテゴリに属する書籍の一覧
+# 子カテゴリ名で検索
+select \
+  --table Literature \
+  --match_columns 'child_category._key' \
+  --query 'イケてるカテゴリー' \
+  --output_columns '_key, title, child_category' \
+  --output_pretty yes
+
+# List books of found parent categories
+# Full text search against parent category name
+# 親カテゴリに属する書籍の一覧
+# 親カテゴリ名で検索
+select \
+  --table Literature \
+  --match_columns 'child_category.parent._key' \
+  --query 'イケてる親カテゴリー' \
+  --output_columns '_key, title, child_category, child_category.parent' \
+  --output_pretty yes
+
+# List books of found series
+# Full text search against series name
+# シリーズに属している書籍の一覧
+# シリーズ名で全文検索
+select \
+  --table Literature \
+  --match_columns 'series._key' \
+  --query 'イケてるシリーズ' \
+  --output_columns '_key, title, series' \
+  --output_pretty yes

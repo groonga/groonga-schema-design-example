@@ -1,0 +1,82 @@
+load --table PaperPublishers
+[
+{"_key": "イケてる論文出版"},
+{"_key": "すごい論文出版"}
+]
+
+load --table Magazines
+[
+{"_key": "イケてる雑誌", "publisher": "イケてる論文出版"},
+{"_key": "おもしろ雑誌", "publisher": "イケてる論文出版"},
+{"_key": "簡単雑誌",     "publisher": "すごい論文出版"}
+]
+
+load --table Volumes
+[
+{"_key": "イケてる1号", "magazine": "イケてる雑誌"},
+{"_key": "イケてる2号", "magazine": "イケてる雑誌"},
+{"_key": "イケてる3号", "magazine": "イケてる雑誌"},
+{"_key": "おもしろ1号", "magazine": "おもしろ雑誌"},
+{"_key": "簡単1号",     "magazine": "簡単雑誌"},
+{"_key": "簡単2号",     "magazine": "簡単雑誌"}
+]
+
+load --table Literature
+[
+{"_key": "ISSN:1:1", "title": "イケてる論文1", "authors": ["山田太郎", "山田五郎"],
+ "type": "paper", "volume": "イケてる1号"},
+{"_key": "ISSN:1:2", "title": "驚き論文", "authors": ["山田花子"],
+ "type": "paper", "volume": "イケてる1号"},
+{"_key": "ISSN:2:1", "title": "イケてる論文2", "authors": ["田中はじめ"],
+ "type": "paper", "volume": "イケてる2号"},
+{"_key": "ISSN:3:1", "title": "イケてる論文3", "authors": ["山田一郎"],
+ "type": "paper", "volume": "イケてる3号"},
+{"_key": "ISSN:4:1", "title": "おもしろ論文1", "authors": ["佐藤あかね"],
+ "type": "paper", "volume": "おもしろ1号"},
+{"_key": "ISSN:5:1", "title": "簡単論文1", "authors": ["山中太郎"],
+ "type": "paper", "volume": "簡単1号"},
+{"_key": "ISSN:5:2", "title": "簡単論文2", "authors": ["佐藤邦子"],
+ "type": "paper", "volume": "簡単1号"}
+]
+
+load --table BookPublishers
+[
+{"_key": "イケてる書籍出版"},
+{"_key": "すごい書籍出版"}
+]
+
+load --table ParentCategories
+[
+{"_key": "イケてる親カテゴリー"},
+{"_key": "すごい親カテゴリー"}
+]
+
+load --table ChildCategories
+[
+{"_key": "イケてるカテゴリー", parent: "イケてる親カテゴリー"},
+{"_key": "すごいカテゴリー",   parent: "すごい親カテゴリー"}
+]
+
+load --table Series
+[
+{"_key": "イケてるシリーズ"},
+{"_key": "すごいシリーズ"}
+]
+
+load --table Literature
+[
+{"_key": "ISBN:1", "title": "イケてる書籍", authors: ["山田太郎"],
+ "type": "book",
+ "book_publisher": "イケてる書籍出版",
+ "child_category": "イケてるカテゴリー",
+ "series": "イケてるシリーズ"},
+{"_key": "ISBN:2", "title": "驚き書籍", authors: ["鈴木太郎"],
+ "type": "book",
+ "book_publisher": "イケてる書籍出版",
+ "child_category": "イケてるカテゴリー"},
+{"_key": "ISBN:3", "title": "簡単書籍", authors: ["田中太郎"],
+ "type": "book",
+ "book_publisher": "簡単書籍出版",
+ "child_category": "すごいカテゴリー",
+ "series": "すごいシリーズ"}
+]

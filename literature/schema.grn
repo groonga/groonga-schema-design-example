@@ -1,0 +1,30 @@
+# "paper" or "book"
+table_create Types TABLE_HASH_KEY ShortText
+
+table_create Authors TABLE_HASH_KEY ShortText
+
+table_create PaperPublishers TABLE_HASH_KEY ShortText
+
+table_create Magazines TABLE_HASH_KEY ShortText
+column_create Magazines publisher COLUMN_SCALAR PaperPublishers
+
+table_create Volumes TABLE_PAT_KEY ShortText
+column_create Volumes magazine COLUMN_SCALAR Magazines
+
+table_create BookPublishers TABLE_HASH_KEY ShortText
+
+table_create ParentCategories TABLE_HASH_KEY ShortText
+
+table_create ChildCategories TABLE_HASH_KEY ShortText
+column_create ChildCategories parent COLUMN_SCALAR ParentCategories
+
+table_create Series TABLE_HASH_KEY ShortText
+
+table_create Literature TABLE_HASH_KEY ShortText
+column_create Literature type COLUMN_SCALAR Types
+column_create Literature title COLUMN_SCALAR ShortText
+column_create Literature authors COLUMN_VECTOR Authors
+column_create Literature volume COLUMN_SCALAR Volumes
+column_create Literature book_publisher COLUMN_SCALAR BookPublishers
+column_create Literature child_category COLUMN_SCALAR ChildCategories
+column_create Literature series COLUMN_SCALAR Series
